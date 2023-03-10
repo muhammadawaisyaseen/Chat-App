@@ -1,4 +1,5 @@
 import 'package:chat_app/constants/routes.dart';
+import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/pages/otp_verify.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -71,29 +72,32 @@ class NumberScreen extends StatelessWidget {
               Spacer(),
               Center(
                 child: ElevatedButton(
-                  onPressed: () async {
-                    await FirebaseAuth.instance.verifyPhoneNumber(
-                      phoneNumber: number?.phoneNumber,
-                        verificationCompleted: (_) {
-                          print('DONE');
-                        },
-                        verificationFailed: (e) {
-                          print('ERROR: ${e.code}');
-                        },
-                        codeSent: (String verificationId, int? token) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  OtpVerify(verificationId: verificationId),
-                            ),
-                          );
-                        },
-                        codeAutoRetrievalTimeout: (e) {
-                          print(e.hashCode);
-                        });
-                    
+                  onPressed: () {
+                    AuthApi().verifyNumber(context,number!);
                   },
+                  // onPressed: () async {
+                  //   await FirebaseAuth.instance.verifyPhoneNumber(
+                  //       phoneNumber: number?.phoneNumber,
+                  //       verificationCompleted: (_) {
+                  //         print('DONE');
+                  //       },
+                  //       verificationFailed: (e) {
+                  //         print('ERROR: ${e.code}');
+                  //       },
+                  //       codeSent: (String verificationId, int? token) {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) =>
+                  //                 OtpVerify(verificationId: verificationId),
+                  //           ),
+                  //         );
+                  //       },
+                  //       codeAutoRetrievalTimeout: (e) {
+                  //         print(e.hashCode);
+                  //       });
+                  //   FirebaseAuth.instance.currentUser!.uid;
+                  // },
                   child: Text('Send code'),
                 ),
               ),

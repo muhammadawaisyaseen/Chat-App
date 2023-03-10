@@ -1,3 +1,5 @@
+import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/pages/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -21,7 +23,6 @@ class OtpVerify extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  // Icon(Icons.arrow_back_ios),
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
@@ -62,36 +63,21 @@ class OtpVerify extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-                child: InternationalPhoneNumberInput(
-                  hintText: '6 digit code',
-                  onInputChanged: (value) {},
-                  inputBorder: InputBorder.none,
+                child: TextField(
+                  controller: _otpCodeController,
+                  decoration: const InputDecoration(hintText: '6 digit code'),
+                  keyboardType: TextInputType.number,
                 ),
               ),
               const Spacer(),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    // After verification firebase give you the token
-                    final credentialToken = PhoneAuthProvider.credential(
-                      verificationId: verificationId,
-                      smsCode: _otpCodeController.text.toString(),
-                    );
-                    try {
-                      print('DONE HY BAI');
-                      await FirebaseAuth.instance
-                          .signInWithCredential(credentialToken);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddNameScreen(),
-                          ));
-                    } catch (e) {
-                      print('ERROR: ${e.runtimeType}');
-                      // print(e.hashCode);
-                    }
+                    AuthApi().signInWithCredentialFun(
+                        context, verificationId, _otpCodeController);
+                  
                   },
-                  child: Text('Verify'),
+                  child: const Text('Verify'),
                 ),
               ),
             ],
