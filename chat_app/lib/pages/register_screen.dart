@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/models/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -9,7 +11,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
   final TextEditingController _nameController = TextEditingController();
-  String imageUrl = '';
+  // String number;
+  String _imageUrl = '';
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -61,7 +64,7 @@ class RegisterScreen extends StatelessWidget {
                       await referenceImageToUpload.putFile(File(file.path));
                       // await referenceImageToUpload.putFile(File(file.path));
                       // 3) get download url of image
-                      imageUrl = await referenceImageToUpload.getDownloadURL();
+                      _imageUrl = await referenceImageToUpload.getDownloadURL();
                       // } catch (error) {}
 
                       // store url on firestore database corresponding to item
@@ -80,7 +83,15 @@ class RegisterScreen extends StatelessWidget {
                   height: 10,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    UserInformation info = UserInformation(
+                      name: _nameController.text.trim(),
+                      profile: _imageUrl,
+                      id: AuthApi.uid!,
+                      // number: number,
+                    );
+                    await AuthApi().addData(info);
+                  },
                   child: const Text('Next'),
                 ),
               ],

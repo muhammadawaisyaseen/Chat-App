@@ -1,36 +1,37 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class UserInfo {
+class UserInformation {
   String name;
-  String image;
+  String profile;
   String id;
-  String number;
-  UserInfo({
+  // String number;
+  UserInformation({
     required this.name,
-    required this.image,
+    required this.profile,
     required this.id,
-    required this.number,
+    // required this.number,
   });
 
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
-      'imageUrl': image,
+      'profile': profile,
       'id': id,
-      'number': number,
+      // 'number': number,
     };
   }
 
-  factory UserInfo.fromMap(Map<String, dynamic> map) {
-    return UserInfo(
-      name: map['name'] as String,
-      image: map['imageUrl'] as String,
-      id: map['id'] as String,
-      number: map['number'] as String,
+  factory UserInformation.fromMap(DocumentSnapshot<Map<String, dynamic>> map) {
+    return UserInformation(
+      name: map.data()?['name'] as String,
+      profile: map.data()?['profile'] as String,
+      id: map.data()?['id'] as String,
+      // number: map.data()?['number'] as String,
     );
   }
 }

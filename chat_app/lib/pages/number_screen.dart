@@ -1,16 +1,17 @@
 import 'package:chat_app/constants/routes.dart';
 import 'package:chat_app/database/auth_api.dart';
-import 'package:chat_app/pages/otp_verify.dart';
+import 'package:chat_app/pages/otp_screen.dart';
+import 'package:chat_app/provider/auth_provider.dart';
+import 'package:chat_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 
 class NumberScreen extends StatelessWidget {
   NumberScreen({super.key});
   final TextEditingController _phoneNumberController = TextEditingController();
-  // final phone = " ";
-  bool loading = false;
   PhoneNumber? number;
   @override
   Widget build(BuildContext context) {
@@ -62,19 +63,31 @@ class NumberScreen extends StatelessWidget {
                 ),
                 child: InternationalPhoneNumberInput(
                   textFieldController: _phoneNumberController,
-                  onInputChanged: (value) {
+                  onInputChanged: (PhoneNumber value) {
                     number = value;
                     print(number!.phoneNumber);
+                    // print(number as PhoneNumber);
                   },
                   inputBorder: InputBorder.none,
                 ),
               ),
               Spacer(),
               Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    AuthApi().verifyNumber(context,number!);
-                  },
+                child: CustomButton(text: 'Login',onpress: () {
+                  //     final ap =
+                    final ap = Provider.of<AuthProvider>(context, listen: false);
+                    ap.signInWithPhone(context, number!);
+                    print('In Button ${number!}');
+                },),
+
+                // ElevatedButton(
+                //   onPressed: () {
+                //     final ap =
+                //         Provider.of<AuthProvider>(context, listen: false);
+                //     ap.signInWithPhone(context, number!);
+                //     print('In ElevatedButton ${number!}');
+                    // AuthApi().verifyNumber(context,number!);
+                  // },
                   // onPressed: () async {
                   //   await FirebaseAuth.instance.verifyPhoneNumber(
                   //       phoneNumber: number?.phoneNumber,
@@ -98,8 +111,8 @@ class NumberScreen extends StatelessWidget {
                   //       });
                   //   FirebaseAuth.instance.currentUser!.uid;
                   // },
-                  child: Text('Send code'),
-                ),
+                  // child: Text('Login'),
+                // ),
               ),
             ],
           ),
@@ -107,4 +120,9 @@ class NumberScreen extends StatelessWidget {
       ),
     );
   }
+
+  // void sendPhoneNumber() {
+  //   final ap = Provider.of<AuthProvider>(context, listen: false);
+  // String phoneNumber
+  // }
 }
