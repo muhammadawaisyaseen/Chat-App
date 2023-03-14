@@ -8,12 +8,12 @@ class UserInformation {
   String name;
   String profile;
   String id;
-  // String number;
+  String number;
   UserInformation({
     required this.name,
     required this.profile,
     required this.id,
-    // required this.number,
+    required this.number,
   });
 
 
@@ -22,7 +22,7 @@ class UserInformation {
       'name': name,
       'profile': profile,
       'id': id,
-      // 'number': number,
+      'number': number,
     };
   }
 
@@ -31,7 +31,7 @@ class UserInformation {
       name: map.data()?['name'] as String,
       profile: map.data()?['profile'] as String,
       id: map.data()?['id'] as String,
-      // number: map.data()?['number'] as String,
+      number: map.data()?['number'] as String,
     );
   }
 }

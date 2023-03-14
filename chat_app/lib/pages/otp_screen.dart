@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:chat_app/database/auth_api.dart';
-import 'package:chat_app/functions/snackbar.dart';
+import 'package:chat_app/functions/utils.dart';
 import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/pages/register_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
@@ -127,7 +127,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       onpress: () {
                         if (otpCode != null) {
                           print('OTP CODE: ${otpCode}');
-                          verifyOtp(context, otpCode!);
+                          verifyOtpFuction(context, otpCode!);
                         } else {
                           showSnackBar(context, 'Enter 6 digits code');
                         }
@@ -174,7 +174,7 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 
-  void verifyOtp(BuildContext context, String userOtp) {
+  void verifyOtpFuction(BuildContext context, String userOtp) {
     final ap = Provider.of<AuthProvider>(context, listen: false);
     ap.verifyOtp(
         context: context,
@@ -199,4 +199,5 @@ class _OtpScreenState extends State<OtpScreen> {
           });
         });
   }
+
 }
