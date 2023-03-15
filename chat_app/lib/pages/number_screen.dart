@@ -12,110 +12,114 @@ import 'package:provider/provider.dart';
 class NumberScreen extends StatelessWidget {
   NumberScreen({super.key});
   final TextEditingController _phoneNumberController = TextEditingController();
-  PhoneNumber? number;
+  // PhoneNumber? number;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 26),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start, // |
-            crossAxisAlignment: CrossAxisAlignment.start, // --------------
-            children: [
-              Row(
-                children: const [
-                  Icon(Icons.arrow_back_ios),
-                  SizedBox(
-                    width: 140,
+        body: Consumer<AuthProvider>(
+          builder: (context, AuthProvider authPro, _) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 26),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start, // |
+                crossAxisAlignment: CrossAxisAlignment.start, // --------------
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.arrow_back_ios),
+                      SizedBox(
+                        width: 140,
+                      ),
+                      Center(
+                        child: Text(
+                          'Number',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  Center(
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Center(
                     child: Text(
-                      'Number',
+                      'Enter your phone number',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                        fontSize: 16,
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    child: InternationalPhoneNumberInput(
+                      textFieldController: _phoneNumberController,
+                      onInputChanged: (PhoneNumber value) {
+                          authPro.onPhoneNumberChange(value);
+                          print('PHONE NUMBER:${authPro.phoneNumber}');
+                      },
+                      inputBorder: InputBorder.none,
+                    ),
+                  ),
+                  const Spacer(),
+                  Center(
+                    child: CustomButton(
+                      text: 'Send',
+                      onpress: () {
+                        authPro.verifyPhoneNum(context);
+                        // print('In Button ${number!}');
+                      },
+                    ),
+
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     final ap =
+                    //         Provider.of<AuthProvider>(context, listen: false);
+                    //     ap.signInWithPhone(context, number!);
+                    //     print('In ElevatedButton ${number!}');
+                    // AuthApi().verifyNumber(context,number!);
+                    // },
+                    // onPressed: () async {
+                    //   await FirebaseAuth.instance.verifyPhoneNumber(
+                    //       phoneNumber: number?.phoneNumber,
+                    //       verificationCompleted: (_) {
+                    //         print('DONE');
+                    //       },
+                    //       verificationFailed: (e) {
+                    //         print('ERROR: ${e.code}');
+                    //       },
+                    //       codeSent: (String verificationId, int? token) {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) =>
+                    //                 OtpVerify(verificationId: verificationId),
+                    //           ),
+                    //         );
+                    //       },
+                    //       codeAutoRetrievalTimeout: (e) {
+                    //         print(e.hashCode);
+                    //       });
+                    //   FirebaseAuth.instance.currentUser!.uid;
+                    // },
+                    // child: Text('Login'),
+                    // ),
+                  ),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Center(
-                child: Text(
-                  'Enter your phone number',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                  ),
-                ),
-                child: InternationalPhoneNumberInput(
-                  textFieldController: _phoneNumberController,
-                  onInputChanged: (PhoneNumber value) {
-                    number = value;
-                    print(number!.phoneNumber);
-                    // print(number as PhoneNumber);
-                  },
-                  inputBorder: InputBorder.none,
-                ),
-              ),
-              Spacer(),
-              Center(
-                child: CustomButton(text: 'Login',onpress: () {
-                  //     final ap =
-                    final ap = Provider.of<AuthProvider>(context, listen: false);
-                    ap.signInWithPhone(context, number!);
-                    print('In Button ${number!}');
-                },),
-
-                // ElevatedButton(
-                //   onPressed: () {
-                //     final ap =
-                //         Provider.of<AuthProvider>(context, listen: false);
-                //     ap.signInWithPhone(context, number!);
-                //     print('In ElevatedButton ${number!}');
-                    // AuthApi().verifyNumber(context,number!);
-                  // },
-                  // onPressed: () async {
-                  //   await FirebaseAuth.instance.verifyPhoneNumber(
-                  //       phoneNumber: number?.phoneNumber,
-                  //       verificationCompleted: (_) {
-                  //         print('DONE');
-                  //       },
-                  //       verificationFailed: (e) {
-                  //         print('ERROR: ${e.code}');
-                  //       },
-                  //       codeSent: (String verificationId, int? token) {
-                  //         Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //             builder: (context) =>
-                  //                 OtpVerify(verificationId: verificationId),
-                  //           ),
-                  //         );
-                  //       },
-                  //       codeAutoRetrievalTimeout: (e) {
-                  //         print(e.hashCode);
-                  //       });
-                  //   FirebaseAuth.instance.currentUser!.uid;
-                  // },
-                  // child: Text('Login'),
-                // ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

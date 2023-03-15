@@ -4,7 +4,7 @@ import 'dart:io';
 // import 'dart:js';
 
 import 'package:chat_app/database/auth_api.dart';
-import 'package:chat_app/functions/utils.dart';
+import 'package:chat_app/utilities/utils.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/pages/chat_board.dart';
 import 'package:chat_app/provider/auth_provider.dart';
@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
 
   // String number;
-  String _imageUrl = '';
+  // String _imageUrl = '';
 
   File? image;
 
@@ -164,18 +164,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void storeData(BuildContext context) async {
+    print('STORE DATA FUN');
     final ap = Provider.of<AuthProvider>(context, listen: false);
     UserInformation info = UserInformation(
       name: _nameController.text.trim(),
-      profile: _imageUrl,
-      id: '',
-      number: '',
+      id: ap.uid!,
+      number: ap.firebaseAuth.currentUser!.phoneNumber!,
+      profile: ap.downloadUrlGetter,
     );
     if (image != null) {
       ap.saveUserDataToFirebase(
         context: context,
         info: info,
         profilePic: image!,
+        // downloadUrl:ap.downloadUrlGetter,
         onSuccess: () {
           Navigator.push(
               context,
