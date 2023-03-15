@@ -3,6 +3,8 @@ import 'dart:io';
 // import 'dart:js';
 
 import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/database/user_api.dart';
+import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/utilities/utils.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/pages/otp_screen.dart';
@@ -20,6 +22,10 @@ class AuthProvider extends ChangeNotifier {
   String? _verificationId;
   String? _otp;
   String get otp => _otp!;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController get nameController => _nameController;
+  File? _image;
+  File get image => _image!;
 
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   FirebaseAuth get firebaseAuth => _firebaseAuth;
@@ -29,14 +35,15 @@ class AuthProvider extends ChangeNotifier {
   static String? _uid = _firebaseAuth.currentUser!.uid;
   String? get uid => _uid;
 
-  static String? _downloadUrl = _firebaseAuth.currentUser!.photoURL;
-  String get downloadUrlGetter => _downloadUrl ?? " ";
+  // static String? _downloadUrl = _firebaseAuth.currentUser!.photoURL;
+  // String get downloadUrlGetter => _downloadUrl ?? " ";
 
   final FirebaseFirestore _firestoreInstance = FirebaseFirestore.instance;
   FirebaseFirestore get firestoreInstance => _firestoreInstance;
-  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   static const String _collection = 'user_information';
 
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  FirebaseStorage get firebaseStorage => _firebaseStorage;
   UserInformation? _information;
   UserInformation get information => _information!;
 
@@ -82,6 +89,7 @@ class AuthProvider extends ChangeNotifier {
 
   ///////////////
   ///
+
   void saveUserDataToFirebase({
     required BuildContext context,
     required UserInformation info,
@@ -98,8 +106,8 @@ class AuthProvider extends ChangeNotifier {
       UploadTask uploadTask =
           _firebaseStorage.ref().child(_uid!).putFile(profilePic);
       TaskSnapshot snapshot = await uploadTask;
-      _downloadUrl = await snapshot.ref.getDownloadURL();
-      print('DOWNLOAD URL: ${_downloadUrl}');
+      // _downloadUrl = await snapshot.ref.getDownloadURL();
+      // print('DOWNLOAD URL: ${_downloadUrl}');
       print('MODEL DATA: ${info}');
       // .then((String value) {
       //   info.profile = value;
@@ -172,9 +180,36 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> verifyOtpFun(String otp,BuildContext context) async {
+  Future<void> verifyOtpFun(String otp, BuildContext context) async {
     // if (_verificationId == null) return 0;
     await AuthApi().verifyOTP(_verificationId!, otp, context);
     // return num;
   }
+//-------------------------
+
+  Future<void> onRegister(BuildContext context) async {
+    print('onRegister FUN');
+    String? url;
+    url=await UserApi().uploadProfilePhoto(file: _image!);
+    UserInformation info = UserInformation(
+      name: _nameController.text.trim(),
+      id: _uid!,
+      number: _phoneNumber.toString(),
+      profile: url,
+    );
+    if (_image != null) {
+      UserApi().addUserDataToFirebase(info);
+    } else {
+      showSnackBar(context, 'Please upload your profile photo');
+    }
+  }
+
+  //For selecting image
+  void selectImage(BuildContext context) async {
+    _image = await pickImage(context);
+  }
+
+  // Future<Future> fun(BuildContext context, String route) async {
+  //   return Navigator.of(context).push(route as Route<Object?>);
+  // }
 }

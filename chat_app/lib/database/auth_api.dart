@@ -1,3 +1,5 @@
+import 'package:chat_app/constants/routes.dart';
+import 'package:chat_app/provider/auth_provider.dart';
 import 'package:chat_app/utilities/utils.dart';
 import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/pages/register_screen.dart';
@@ -31,6 +33,7 @@ class AuthApi {
             await _firestoreInstance.collection(_collection).doc(_uid).get();
         if (snapshot.exists) {
           print('PURANA USER');
+          // AuthProvider().fun(context,registerScreenRoute);
           Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -38,11 +41,11 @@ class AuthApi {
                   ));
         } else {
           print('NEW USER');
-           Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegisterScreen(),
-                  ));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegisterScreen(),
+              ));
         }
       }
     } catch (e) {
