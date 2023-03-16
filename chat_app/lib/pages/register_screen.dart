@@ -1,14 +1,17 @@
 import 'dart:io';
+import 'package:chat_app/pages/chat_board.dart';
 import 'package:chat_app/provider/auth_provider.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
+
 class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         CustomButton(
                           text: 'REGISTER',
                           onpress: () async {
-                            authPro.onRegister(context);
+                            await authPro.onRegister(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatBoardScreen(),
+                              ),
+                            );
                           },
                         )
                       ],
