@@ -43,6 +43,8 @@ dependencies:
   image_picker: ^0.8.7
   firebase_storage: ^11.0.15
   provider: ^6.0.5
+  libphonenumber: ^2.0.2
+  intl_phone_field: ^3.1.0
 
 dev_dependencies:
   flutter_test:

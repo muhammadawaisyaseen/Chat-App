@@ -9,19 +9,19 @@ class CustomButton extends StatelessWidget {
     return InkWell(
       onTap: onpress,
       child: Container(
-        width: MediaQuery.of(context).size.width * 1,
-        height: 70,
+        width: 140,
+        height: 50,
         decoration: BoxDecoration(
-            gradient: const LinearGradient(
-                colors: [Color(0xFFf34351), Color(0xFFfd4553)]),
-            borderRadius: BorderRadius.circular(50)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          color: Colors.amber,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
           child: Text(
             text,
-            textAlign: TextAlign.center,
             style: const TextStyle(
-                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+              fontSize: 18,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

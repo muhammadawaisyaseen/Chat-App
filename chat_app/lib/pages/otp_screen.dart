@@ -1,37 +1,24 @@
-// import 'dart:math';
-
-import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/utilities/utils.dart';
-import 'package:chat_app/pages/chat_screen.dart';
-import 'package:chat_app/pages/register_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pinput/pinput.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 class OtpScreen extends StatefulWidget {
-  OtpScreen({super.key});
-  // final String verificationId;
+  const OtpScreen({super.key});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  // String? otpCode;
-
-  // final PhoneNumber number;
-  // final TextEditingController _otpCodeController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     final isLoading =
         Provider.of<AuthProvider>(context, listen: true).isLoading;
     return Scaffold(
+      backgroundColor: Color(0xFFf4f4f4),
       body: SafeArea(
         child: isLoading == true
             ? const Center(
@@ -57,11 +44,11 @@ class _OtpScreenState extends State<OtpScreen> {
                                 },
                                 icon: const Icon(Icons.arrow_back_ios)),
                             const SizedBox(
-                              width: 140,
+                              width: 60,
                             ),
                             const Center(
                               child: Text(
-                                'OTP',
+                                'OTP verification',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 22,
@@ -73,10 +60,10 @@ class _OtpScreenState extends State<OtpScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        const Center(
+                        Center(
                           child: Text(
-                            'Enter your otp',
-                            style: TextStyle(
+                            'Code is send to ${authPro.phoneNumber!.phoneNumber}',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -104,73 +91,47 @@ class _OtpScreenState extends State<OtpScreen> {
                           ),
                           onCompleted: (String value) {
                             authPro.onPinPutCompleted(value);
-                            // setState(() {
-                            //   authPro.otp = value;
-                            // });
-                          },
-                        ),
-                        // Container(
-                        //   decoration: BoxDecoration(
-                        //     border: Border.all(
-                        //       color: Colors.grey,
-                        //     ),
-                        //   ),
-                        //   child: TextField(
-                        //     controller: _otpCodeController,
-                        //     decoration: const InputDecoration(hintText: '6 digit code'),
-                        //     keyboardType: TextInputType.number,
-                        //   ),
-                        // ),
-                        // const Spacer(),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        CustomButton(
-                          text: 'Verify',
-                          onpress: () {
-                            if (authPro.otp != null) {
-                              authPro.verifyOtpFun(authPro.otp,context);
-                              // print('OTP CODE: ${authPro.otp}');
-                              // verifyOtpFuction(context, otpCode!);
-                            } else {
-                              showSnackBar(context, 'Enter 6 digits code');
-                            }
-                            // Print('Awais'),
                           },
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Don't receive any code?",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "Didn't receive the OTP?",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "Resend OTP",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.amber,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 8,
+                        const Spacer(),
+                        CustomButton(
+                          text: 'VERIFY',
+                          onpress: () {
+                            if (authPro.otp != null) {
+                              authPro.verifyOtpFun(context);
+                            } else {
+                              showSnackBar(context, 'Enter 6 digits code');
+                            }
+                          },
                         ),
-                        const Text(
-                          "Resend New code",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-
-                        // Center(
-                        //   child: ElevatedButton(
-                        // onPressed: () async {
-                        //   AuthApi().signInWithCredentialFun(
-                        //       context, verificationId, _otpCodeController, number);
-                        // },
-                        //   onPressed: () {},
-                        //   child: const Text('Next'),
-                        // ),
-                        // ),
                       ],
                     ),
                   );
@@ -179,30 +140,4 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
     );
   }
-
-  // void verifyOtpFuction(BuildContext context, String userOtp) {
-  //   final ap = Provider.of<AuthProvider>(context, listen: false);
-  //   ap.verifyOtp(
-  //       context: context,
-  //       verificationId: widget.verificationId,
-  //       userOtp: userOtp,
-  //       onSuccess: () {
-  // check whether user exist in db
-  // ap.checkingExistingUser().then((bool value) async {
-  // if (value == true) {
-  // Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => ChatScreen(),
-  //     ));
-  // } else {
-  // Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => RegisterScreen(),
-  //     ));
 }
-        //   });
-        // });
-//   }
-// }
