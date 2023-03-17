@@ -1,4 +1,5 @@
 import 'package:chat_app/firebase_options.dart';
+import 'package:chat_app/pages/chat_board.dart';
 import 'package:chat_app/pages/number_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: NumberScreen(),
+        home: ChatBoardScreen(),
       ),
     );
   }

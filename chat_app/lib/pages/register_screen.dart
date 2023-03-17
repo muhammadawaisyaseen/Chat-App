@@ -64,6 +64,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: 20,
                         ),
                         CustomButton(
+                                                textfontSize: 18,
+                      textColor: Colors.white,
+                          btnColor: Colors.amber,
+                          width: 140,
+                          height: 50,
                           text: 'REGISTER',
                           onpress: () async {
                             await authPro.onRegister(context);

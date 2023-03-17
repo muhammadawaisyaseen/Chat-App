@@ -18,10 +18,18 @@ class UserApi {
         .set(userInfo.toMap());
   }
 
-  Future<String> uploadProfilePhoto({required File file})async{
+  Future<String> uploadProfilePhoto({required File file}) async {
     UploadTask uploadTask =
-          _firebaseStorage.ref().child(AuthApi().uid).putFile(file);
-      TaskSnapshot snapshot = await uploadTask;
-      return await snapshot.ref.getDownloadURL();
+        _firebaseStorage.ref().child(AuthApi().uid).putFile(file);
+    TaskSnapshot snapshot = await uploadTask;
+    return await snapshot.ref.getDownloadURL();
+  }
+
+  Future<DocumentSnapshot> isUserExist() async {
+    DocumentSnapshot snapshot = await _firestoreInstance
+        .collection(_collection)
+        .doc(AuthApi().uid)
+        .get();
+    return snapshot;
   }
 }

@@ -123,6 +123,11 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                         const Spacer(),
                         CustomButton(
+                                                textfontSize: 18,
+                      textColor: Colors.white,
+                          btnColor: Colors.amber,
+                          width: 140,
+                      height: 50,
                           text: 'VERIFY',
                           onpress: () {
                             if (authPro.otp != null) {

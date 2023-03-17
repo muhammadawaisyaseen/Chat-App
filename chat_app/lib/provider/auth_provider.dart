@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_api.dart';
+import 'package:chat_app/pages/chat_screen.dart';
+import 'package:chat_app/pages/register_screen.dart';
 import 'package:chat_app/utilities/utils.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
 class AuthProvider extends ChangeNotifier {
-  
   PhoneNumber? _phoneNumber;
   PhoneNumber? get phoneNumber => _phoneNumber;
 
@@ -25,6 +27,7 @@ class AuthProvider extends ChangeNotifier {
   set verificationId(String? s) {
     _verificationId = s;
   }
+
   onPhoneNumberChange(PhoneNumber value) {
     _phoneNumber = value;
   }
@@ -34,7 +37,21 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> verifyOtpFun(BuildContext context) async {
-    await AuthApi().verifyOTP(_verificationId!, otp, context);
+    int temp = await AuthApi().verifyOTP(_verificationId!, otp, context);
+    if (temp == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ChatScreen(),
+        ),
+      );
+    } else if (temp == 0) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RegisterScreen(),
+          ));
+    }
   }
 
   Future<void> onRegister(BuildContext context) async {
@@ -50,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
     if (_image != null) {
       UserApi().addUserDataToFirebase(info);
     } else {
-    showSnackBar(context, 'Please upload your profile photo');
+      showSnackBar(context, 'Please upload your profile photo');
     }
   }
 

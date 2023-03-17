@@ -87,6 +87,11 @@ class NumberScreen extends StatelessWidget {
                   const Spacer(),
                   Center(
                     child: CustomButton(
+                      textfontSize: 18,
+                      textColor: Colors.white,
+                      width: 140,
+                      height: 50,
+                      btnColor: Colors.amber,
                       text: 'SEND',
                       onpress: () async {
                         await AuthApi().verifyPhoneNum(context);

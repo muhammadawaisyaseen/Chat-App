@@ -1,8 +1,7 @@
+import 'package:chat_app/database/user_api.dart';
 import 'package:chat_app/pages/otp_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
 import 'package:chat_app/utilities/utils.dart';
-import 'package:chat_app/pages/chat_screen.dart';
-import 'package:chat_app/pages/register_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +16,14 @@ class AuthApi {
 
   final FirebaseFirestore _firestoreInstance = FirebaseFirestore.instance;
   FirebaseFirestore get firestoreInstance => _firestoreInstance;
-  static const String _collection = 'user_information';
+  // static const String _collection = 'user_information';
 
-  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  FirebaseAuth get firebaseAuth => _firebaseAuth;
+  // static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // FirebaseAuth get firebaseAuth => _firebaseAuth;
 
   Future<void> verifyPhoneNum(BuildContext context) async {
     try {
-      await _firebaseAuth.verifyPhoneNumber(
+      await _authInstance.verifyPhoneNumber(
         phoneNumber: Provider.of<AuthProvider>(context, listen: false)
             .phoneNumber!
             .phoneNumber,
@@ -51,8 +50,9 @@ class AuthApi {
     }
   }
 
-  Future<void> verifyOTP(
+  Future<int> verifyOTP(
       String verificationId, String otp, BuildContext context) async {
+    int temp = -1;
     try {
       PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: otp);
@@ -60,26 +60,23 @@ class AuthApi {
           await _authInstance.signInWithCredential(phoneAuthCredential);
       if (authCredetial.user != null) {
         _uid = authCredetial.user!.uid;
-        DocumentSnapshot snapshot =
-            await _firestoreInstance.collection(_collection).doc(_uid).get();
+        // DocumentSnapshot snapshot =
+        // await _firestoreInstance.collection(_collection).doc(_uid).get();
+
+        // if (snapshot.exists)
+        DocumentSnapshot snapshot = await UserApi().isUserExist();
         if (snapshot.exists) {
           print('PURANA USER');
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChatScreen(),
-              ));
+          temp = 1;
         } else {
           print('NEW USER');
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RegisterScreen(),
-              ));
+          temp = 0;
         }
       }
     } catch (e) {
       showSnackBar(context, e.toString());
+      temp = -1;
     }
+    return temp;
   }
 }

@@ -1,26 +1,40 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  CustomButton({required this.text, required this.onpress, super.key});
+  CustomButton(
+      {required this.width,
+      required this.height,
+      required this.text,
+      required this.onpress,
+      required this.btnColor,
+      required this.textfontSize,
+      required this.textColor,
+      
+      super.key});
   String text;
+  double width;
+  double height;
+  Color btnColor;
+  double textfontSize;
+  Color textColor;
   VoidCallback onpress;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onpress,
       child: Container(
-        width: 140,
-        height: 50,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
-          color: Colors.amber,
+          color: btnColor,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Colors.white,
+            style: TextStyle(
+              fontSize: textfontSize,
+              color: textColor,
             ),
           ),
         ),
