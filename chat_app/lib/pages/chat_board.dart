@@ -1,5 +1,8 @@
 import 'package:chat_app/widgets/custom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fast_contacts/fast_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChatBoardScreen extends StatelessWidget {
   const ChatBoardScreen({super.key});
@@ -134,44 +137,95 @@ class ChatBoardScreen extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-
               Expanded(
-                child: ListView.builder(
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFf4f4f4),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.person_pin_rounded,
-                              color: Colors.blue,
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            const Text('Name'),
-                            const Spacer(),
-                            CustomButton(
-                              textfontSize: 14,
-                              textColor: Colors.white,
-                              btnColor: Colors.amber,
-                              width: 80,
-                              height: 40,
-                              text: 'Invite',
-                              onpress: () {},
-                            ),
-                          ],
+                child: FutureBuilder<List<Contact>>(
+                  future: getContacts(),
+                  builder: (context, AsyncSnapshot<List<Contact>> snapshot) {
+                    if (snapshot.data == null) {
+                      const SizedBox(
+                        height: 60,
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
-                      ),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: snapshot.data?.length,
+                      itemBuilder: (context, index) {
+                        Contact contact = snapshot.data![index];
+                        return Container(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFf4f4f4),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.person_pin_rounded,
+                                  color: Colors.blue,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(contact.displayName),
+                                const Spacer(),
+                                CustomButton(
+                                  textfontSize: 14,
+                                  textColor: Colors.white,
+                                  btnColor: Colors.amber,
+                                  width: 80,
+                                  height: 40,
+                                  text: 'Invite',
+                                  onpress: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
-              ),
+              )
+
+              // Expanded(
+              //   child: ListView.builder(
+              //     itemCount: 20,
+              //     itemBuilder: (context, index) {
+              //       return Container(
+              //         decoration: const BoxDecoration(
+              //           color: Color(0xFFf4f4f4),
+              //         ),
+              //         child: Padding(
+              //           padding: const EdgeInsets.all(14),
+              //           child: Row(
+              //             children: [
+              //               const Icon(
+              //                 Icons.person_pin_rounded,
+              //                 color: Colors.blue,
+              //               ),
+              //               const SizedBox(
+              //                 width: 20,
+              //               ),
+              //               const Text('Name'),
+              //               const Spacer(),
+              //               CustomButton(
+              //                 textfontSize: 14,
+              //                 textColor: Colors.white,
+              //                 btnColor: Colors.amber,
+              //                 width: 80,
+              //                 height: 40,
+              //                 text: 'Invite',
+              //                 onpress: () {},
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -188,4 +242,15 @@ class ChatBoardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<List<Contact>> getContacts() async {
+  bool isGranted = await Permission.contacts.status.isGranted;
+  if (!isGranted) {
+    isGranted = await Permission.contacts.request().isGranted;
+  }
+  if (isGranted) {
+    return await FastContacts.getAllContacts();
+  }
+  return [];
 }

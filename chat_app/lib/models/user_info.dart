@@ -26,7 +26,7 @@ class UserInformation {
     return UserInformation(
       name: map.data()?['name'] as String,
       profile: map.data()?['profile'] as String,
-      id: map.data()?['id'] as String,
+      id: map.data()?['id'] ??'',
       number: map.data()?['number'] as String,
     );
   }
