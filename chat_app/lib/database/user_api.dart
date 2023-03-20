@@ -30,11 +30,29 @@ class UserApi {
   //   });
   // }
 
-  // Future<List<UserInformation>> retrieveData() async {
-  //   // return _firestoreInstance.collection(_collection).get()
-  //   List<UserInformation> user = [];
-
+  // Future<List<Categories>> categories() async {
+  //   List<Categories> cat = <Categories>[];
+  //   final QuerySnapshot<Map<String, dynamic>> doc =
+  //       await _instance.collection(_collection).get();
+  //   if (doc.docs.isEmpty) return cat;
+  //   for (DocumentSnapshot<Map<String, dynamic>> element in doc.docs) {
+  //     final Categories getterData = Categories.fromDoc(element);
+  //     log(getterData.title);
+  //     cat.add(getterData);
+  //   }
+  //   return cat;
   // }
+
+  Future<List<UserInformation>> retrieveData() async {
+    List<UserInformation> user = <UserInformation>[];
+    final QuerySnapshot<Map<String, dynamic>> doc =
+        await _firestoreInstance.collection(_collection).get();
+    if (doc.docs.isEmpty) return user;
+    for (DocumentSnapshot<Map<String, dynamic>> element in doc.docs) {
+      user.add(UserInformation.fromMap(element));
+    }
+    return user;
+  }
 
   Future<String> uploadProfilePhoto({required File file}) async {
     UploadTask uploadTask =
