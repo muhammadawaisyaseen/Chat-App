@@ -9,7 +9,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class ChatBoardScreen extends StatelessWidget {
-  const ChatBoardScreen({super.key});
+  List<UserInformation> userLisst = [];
+  List<String> phones = [];
+  List<String> dummy = [];
+
+  ChatBoardScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -118,7 +122,7 @@ class ChatBoardScreen extends StatelessWidget {
                                 const SizedBox(
                                   width: 20,
                                 ),
-                                Text(user[index].name),
+                                Text(user[index].number),
                                 const Spacer(),
                                 CustomButton(
                                   textfontSize: 14,
@@ -134,7 +138,7 @@ class ChatBoardScreen extends StatelessWidget {
                                 ),
                                 CustomButton(
                                   textfontSize: 14,
-                                  textColor: Colors.white,
+                                  textColor: Color.fromARGB(255, 56, 35, 35),
                                   btnColor: Colors.amber,
                                   width: 80,
                                   height: 40,
@@ -165,7 +169,7 @@ class ChatBoardScreen extends StatelessWidget {
                 builder: (context, AuthProvider authPro, child) {
                   return Expanded(
                     child: FutureBuilder<List<Contact>>(
-                      future: authPro.getContacts(),
+                      future: getContacts(),
                       builder:
                           (context, AsyncSnapshot<List<Contact>> snapshot) {
                         if (snapshot.data == null) {
@@ -180,6 +184,14 @@ class ChatBoardScreen extends StatelessWidget {
                           itemCount: snapshot.data?.length ?? 0,
                           itemBuilder: (context, index) {
                             Contact contact = snapshot.data![index];
+
+                            // String packageName =  PackageInfo.fromPlatform().then((value) => value.packageName);
+                            // phones[] have all the numbers
+                            contact.phones.toSet().forEach((phone) {
+                              phones.add(phone.number);
+                            });
+                            
+
                             return Container(
                               decoration: const BoxDecoration(
                                 color: Color(0xFFf4f4f4),
@@ -195,7 +207,16 @@ class ChatBoardScreen extends StatelessWidget {
                                     const SizedBox(
                                       width: 20,
                                     ),
-                                    Text(contact.displayName),
+                                    Column(
+                                      // mainAxisAlignment:
+                                      //     MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('${contact.displayName}'),
+                                        Text(contact.phones[0].number),
+                                      ],
+                                    ),
                                     const Spacer(),
                                     CustomButton(
                                       textfontSize: 14,
@@ -210,6 +231,7 @@ class ChatBoardScreen extends StatelessWidget {
                                 ),
                               ),
                             );
+                            
                           },
                         );
                       },
@@ -223,4 +245,27 @@ class ChatBoardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+// List<String> names = [];
+// List<String> phones = [];
+
+// Iterable<Contact> _contacts = await ContactsService.getContacts(withThumbnails: false);
+
+// _contacts.forEach((contact) {
+//   contact.phones.toSet().forEach((phone) {
+//     names.add(contact.displayName ?? contact.givenName);
+//     phones.add(phone.value);
+//   });
+// });
+
+Future<List<Contact>> getContacts() async {
+  bool isGranted = await Permission.contacts.status.isGranted;
+  if (!isGranted) {
+    isGranted = await Permission.contacts.request().isGranted;
+  }
+  if (isGranted) {
+    return await FastContacts.getAllContacts();
+  }
+  return [];
 }

@@ -77,14 +77,5 @@ class AuthProvider extends ChangeNotifier {
     _image = await pickImage(context);
   }
 
-  Future<List<Contact>> getContacts() async {
-  bool isGranted = await Permission.contacts.status.isGranted;
-  if (!isGranted) {
-    isGranted = await Permission.contacts.request().isGranted;
-  }
-  if (isGranted) {
-    return await FastContacts.getAllContacts();
-  }
-  return [];
-}
+  
 }

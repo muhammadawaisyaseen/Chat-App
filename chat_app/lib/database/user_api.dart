@@ -20,29 +20,6 @@ class UserApi {
         .set(userInfo.toMap());
   }
 
-  //   Stream<List<Product>> retrieveData() {
-  //   return _instance.collection(_collection).snapshots().asyncMap((event) {
-  //     List<Product> myItems = [];
-  //     for (DocumentSnapshot<Map<String, dynamic>> element in event.docs) {
-  //       myItems.add(Product.fromMap(element));
-  //     }
-  //     return myItems;
-  //   });
-  // }
-
-  // Future<List<Categories>> categories() async {
-  //   List<Categories> cat = <Categories>[];
-  //   final QuerySnapshot<Map<String, dynamic>> doc =
-  //       await _instance.collection(_collection).get();
-  //   if (doc.docs.isEmpty) return cat;
-  //   for (DocumentSnapshot<Map<String, dynamic>> element in doc.docs) {
-  //     final Categories getterData = Categories.fromDoc(element);
-  //     log(getterData.title);
-  //     cat.add(getterData);
-  //   }
-  //   return cat;
-  // }
-
   Future<List<UserInformation>> retrieveData() async {
     List<UserInformation> user = <UserInformation>[];
     final QuerySnapshot<Map<String, dynamic>> doc =
@@ -68,4 +45,12 @@ class UserApi {
         .get();
     return snapshot;
   }
+
+  // Future<void> findUsers(final String number) async{
+  //   Query query = FirebaseDatabase.getInstance()
+  //       .getReference()
+  //       .child("User")
+  //       .orderByChild("phone")
+  //       .equalTo(number);
+  // }
 }
