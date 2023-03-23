@@ -46,11 +46,7 @@ class UserApi {
     return snapshot;
   }
 
-  // Future<void> findUsers(final String number) async{
-  //   Query query = FirebaseDatabase.getInstance()
-  //       .getReference()
-  //       .child("User")
-  //       .orderByChild("phone")
-  //       .equalTo(number);
-  // }
+  Future<DocumentSnapshot<Map<String, dynamic>>> getAppUserData(String id) async {
+    return await _firestoreInstance.collection(_collection).doc(id).get();
+  }
 }

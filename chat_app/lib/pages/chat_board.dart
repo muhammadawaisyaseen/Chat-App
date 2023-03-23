@@ -97,18 +97,15 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                 child: FutureBuilder(
                   future: getAppContacts(),
                   builder: (context, AsyncSnapshot<List<String>> snapshot) {
-                    if (snapshot.data == null) {
-                      return const SizedBox(
-                        height: 60,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
                     } else if (snapshot.hasData) {
                       List<String> appContacts = snapshot.data ?? [];
+                      
                       return ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
+                          // UserApi().getAppUserData(appContacts[index]);
                           return Container(
                             decoration: const BoxDecoration(
                               color: Color(0xFFf4f4f4),
@@ -124,7 +121,16 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                   const SizedBox(
                                     width: 20,
                                   ),
-                                  Text(appContacts[index]),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(appContacts[index]),
+                                      Text(appContacts[index]),
+                                    ],
+                                  ),
+                                  // Text(appContacts[index]),
                                   const Spacer(),
                                   CustomButton(
                                     textfontSize: 14,
@@ -181,77 +187,77 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                   fontSize: 20,
                 ),
               ),
-              Consumer<AuthProvider>(
-                builder: (context, AuthProvider authPro, child) {
-                  return Expanded(
-                    child: FutureBuilder<List<Contact>>(
-                      future: FastContacts.getAllContacts(),
-                      builder:
-                          (context, AsyncSnapshot<List<Contact>> snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something goes wrong ${snapshot.error}');
-                        }
-                        if (snapshot.hasData) {
-                          final List<Contact> myContacts = snapshot.data ?? [];
-                          // print('My Contacts $myContacts');
-                          return ListView.builder(
-                            itemCount: myContacts.length,
-                            itemBuilder: (context, index) {
-                              Contact contact = myContacts[index];
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFf4f4f4),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.person_pin_rounded,
-                                        color: Colors.blue,
-                                      ),
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(contact.displayName),
-                                          Text(contact.phones[0].number),
-                                        ],
-                                      ),
-                                      const Spacer(),
-                                      CustomButton(
-                                        textfontSize: 14,
-                                        textColor: Colors.white,
-                                        btnColor: Colors.amber,
-                                        width: 80,
-                                        height: 40,
-                                        text: 'Invite',
-                                        onpress: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          return const SizedBox(
-                            height: 60,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  );
-                },
-              )
+              // Consumer<AuthProvider>(
+              //   builder: (context, AuthProvider authPro, child) {
+              //     return Expanded(
+              //       child: FutureBuilder<List<Contact>>(
+              //         future: FastContacts.getAllContacts(),
+              //         builder:
+              //             (context, AsyncSnapshot<List<Contact>> snapshot) {
+              //           if (snapshot.hasError) {
+              //             return Text('Something goes wrong ${snapshot.error}');
+              //           }
+              //           if (snapshot.hasData) {
+              //             final List<Contact> myContacts = snapshot.data ?? [];
+              //             // print('My Contacts $myContacts');
+              //             return ListView.builder(
+              //               itemCount: myContacts.length,
+              //               itemBuilder: (context, index) {
+              //                 Contact contact = myContacts[index];
+              //                 return Container(
+              //                   decoration: const BoxDecoration(
+              //                     color: Color(0xFFf4f4f4),
+              //                   ),
+              //                   child: Padding(
+              //                     padding: const EdgeInsets.all(14),
+              //                     child: Row(
+              //                       children: [
+              //                         const Icon(
+              //                           Icons.person_pin_rounded,
+              //                           color: Colors.blue,
+              //                         ),
+              //                         const SizedBox(
+              //                           width: 20,
+              //                         ),
+              //                         Column(
+              //                           mainAxisAlignment:
+              //                               MainAxisAlignment.start,
+              //                           crossAxisAlignment:
+              //                               CrossAxisAlignment.start,
+              //                           children: [
+              //                             Text(contact.displayName),
+              //                             Text(contact.phones[0].number),
+              //                           ],
+              //                         ),
+              //                         const Spacer(),
+              //                         CustomButton(
+              //                           textfontSize: 14,
+              //                           textColor: Colors.white,
+              //                           btnColor: Colors.amber,
+              //                           width: 80,
+              //                           height: 40,
+              //                           text: 'Invite',
+              //                           onpress: () {},
+              //                         ),
+              //                       ],
+              //                     ),
+              //                   ),
+              //                 );
+              //               },
+              //             );
+              //           } else {
+              //             return const SizedBox(
+              //               height: 60,
+              //               child: Center(
+              //                 child: CircularProgressIndicator(),
+              //               ),
+              //             );
+              //           }
+              //         },
+              //       ),
+              //     );
+              //   },
+              // )
             ],
           ),
         ),
@@ -284,9 +290,15 @@ Future<List<String>> getAppContacts() async {
                 .replaceAll(' ', '')
                 .replaceFirst('0', '+92') ==
             userList[j].number) {
-          print('Matched NO: ${contact[i].phones[0].number}');
+          print('Matched NO: ${contact[i].phones[0].number}'
+              .replaceAll(' ', '')
+              .replaceFirst('0', '+92'));
+          // dummy.add(contact[i].phones[0].number);
           dummy.add(userList[j].id);
         }
+      } else if (contact[i].phones[0].number.replaceAll(' ', '') ==
+          userList[j].number) {
+        dummy.add(userList[j].id);
       }
     }
   }
