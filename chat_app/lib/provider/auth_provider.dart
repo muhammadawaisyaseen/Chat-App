@@ -14,6 +14,7 @@ class AuthProvider extends ChangeNotifier {
   PhoneNumber? _phoneNumber;
   PhoneNumber? get phoneNumber => _phoneNumber;
 
+  // List<String> dummy = [];
   String? _otp;
   String get otp => _otp!;
   final TextEditingController _nameController = TextEditingController();
@@ -76,6 +77,4 @@ class AuthProvider extends ChangeNotifier {
   void selectImage(BuildContext context) async {
     _image = await pickImage(context);
   }
-
-  
 }

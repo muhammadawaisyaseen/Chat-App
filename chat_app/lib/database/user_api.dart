@@ -1,15 +1,21 @@
 import 'dart:io';
 import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/models/user_info.dart';
+import 'package:chat_app/pages/chat_board.dart';
+import 'package:chat_app/provider/contact_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fast_contacts/fast_contacts.dart';
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class UserApi {
   static const String _collection = 'user_information';
+  String get collection => _collection;
   static final FirebaseFirestore _firestoreInstance =
       FirebaseFirestore.instance;
+  static FirebaseFirestore get firestoreInstance => _firestoreInstance;
 
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
@@ -46,7 +52,28 @@ class UserApi {
     return snapshot;
   }
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getAppUserData(String id) async {
-    return await _firestoreInstance.collection(_collection).doc(id).get();
+  Future<QuerySnapshot<Map<String, dynamic>>> getAppUsersList(
+      BuildContext context) async {
+    //ContactProvider contactPro = Provider.of<Cont>(context,listen: false);
+    List<String> temp = await getAppContactsUids();
+    return await _firestoreInstance
+        .collection(_collection)
+        .where(FieldPath.documentId, whereIn: temp)
+        .get();
   }
+
+//   void runFilter(String enteredKeyword) async {
+//     if (enteredKeyword.isNotEmpty) {}
+//     var snapshot = await _firestoreInstance
+//         .collection(_collection)
+//         .where(
+//           'name',
+//           isGreaterThanOrEqualTo: enteredKeyword,
+//           isLessThan: enteredKeyword.substring(0, enteredKeyword.length - 1) +
+//               String.fromCharCode(
+//                   enteredKeyword.codeUnitAt(enteredKeyword.length - 1) + 1),
+//         )
+//         .get();
+//     // print('enteredKeyword: ${snapshot.docs}');
+//   }
 }
