@@ -1,6 +1,7 @@
 // import 'dart:html';
 
 import 'package:chat_app/database/user_api.dart';
+import 'package:chat_app/database/user_chat_Api.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
@@ -40,15 +41,18 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start, // --------------
             children: [
               Row(
-                children: const [
-                  Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.black,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.black,
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 120,
                   ),
-                  Text(
+                  const Text(
                     'Contacts',
                     style: TextStyle(
                       color: Colors.black,
@@ -75,7 +79,7 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                       name = value;
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Search Contacts...',
                     hintStyle: TextStyle(
                       color: Colors.grey,
@@ -119,73 +123,89 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                       return ListView.builder(
                         itemCount: snapshot.data?.docs.length ?? 0,
                         itemBuilder: (context, index) {
-                          var data = snapshot.data!.docs[index].data();
+                          Map<String, dynamic> data = snapshot.data!.docs[index].data();
                           if (name.isEmpty) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFf4f4f4),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image:
-                                                NetworkImage(data['profile']),
-                                            fit: BoxFit.cover),
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
+                            UserInformation info = UserInformation(
+                            name: data['name'],
+                            profile: data['profile'],
+                            id: data['id'],
+                            number: data['number'],
+                            );
+                            return GestureDetector(
+                              onTap: () {
+                                // if(info!.id!=null){
+                                UserChatApi().goChat(info,context);
+                                // }
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFf4f4f4),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image:
+                                                  NetworkImage(data['profile']),
+                                              fit: BoxFit.cover),
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(data['name']),
-                                        Text(data['number']),
-                                      ],
-                                    ),
-                                    // Text(appContacts[index]),
-                                    const Spacer(),
-                                    CustomButton(
-                                      textfontSize: 14,
-                                      textColor: Colors.grey,
-                                      btnColor: Color(0xFFe2eff5),
-                                      width: 60,
-                                      height: 40,
-                                      text: 'Send',
-                                      onpress: () {},
-                                    ),
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                    CustomButton(
-                                      textfontSize: 14,
-                                      textColor:
-                                          Color.fromARGB(255, 56, 35, 35),
-                                      btnColor: Colors.amber,
-                                      width: 80,
-                                      height: 40,
-                                      text: 'Messege',
-                                      onpress: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ChatScreen(),
-                                            ));
-                                      },
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(data['name']),
+                                          Text(data['number']),
+                                        ],
+                                      ),
+                                      // Text(appContacts[index]),
+                                      const Spacer(),
+                                      CustomButton(
+                                        textfontSize: 14,
+                                        textColor: Colors.grey,
+                                        btnColor: Color(0xFFe2eff5),
+                                        width: 60,
+                                        height: 40,
+                                        text: 'Send',
+                                        onpress: () {},
+                                      ),
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      CustomButton(
+                                        textfontSize: 14,
+                                        textColor:
+                                            Color.fromARGB(255, 56, 35, 35),
+                                        btnColor: Colors.amber,
+                                        width: 80,
+                                        height: 40,
+                                        text: 'Messege',
+                                        onpress: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChatScreen(
+                                                  userName: data['name'],
+                                                  userImage: data['profile'],
+                                                ),
+                                              ));
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -194,71 +214,82 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                               .toString()
                               .toLowerCase()
                               .startsWith(name.toLowerCase())) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFf4f4f4),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image:
-                                                NetworkImage(data['profile']),
-                                            fit: BoxFit.cover),
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
+                            // UserInformation? info;
+                            return GestureDetector(
+                              onTap: () {
+                                // if(info!.id!=null){
+                                UserChatApi().goChat(data['index'],context);
+                                // }
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFf4f4f4),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image:
+                                                  NetworkImage(data['profile']),
+                                              fit: BoxFit.cover),
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(data['name']),
-                                        Text(data['number']),
-                                      ],
-                                    ),
-                                    // Text(appContacts[index]),
-                                    const Spacer(),
-                                    CustomButton(
-                                      textfontSize: 14,
-                                      textColor: Colors.grey,
-                                      btnColor: Color(0xFFe2eff5),
-                                      width: 60,
-                                      height: 40,
-                                      text: 'Send',
-                                      onpress: () {},
-                                    ),
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                    CustomButton(
-                                      textfontSize: 14,
-                                      textColor:
-                                          Color.fromARGB(255, 56, 35, 35),
-                                      btnColor: Colors.amber,
-                                      width: 80,
-                                      height: 40,
-                                      text: 'Messege',
-                                      onpress: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ChatScreen(),
-                                            ));
-                                      },
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(data['name']),
+                                          Text(data['number']),
+                                        ],
+                                      ),
+                                      // Text(appContacts[index]),
+                                      const Spacer(),
+                                      CustomButton(
+                                        textfontSize: 14,
+                                        textColor: Colors.grey,
+                                        btnColor: Color(0xFFe2eff5),
+                                        width: 60,
+                                        height: 40,
+                                        text: 'Send',
+                                        onpress: () {},
+                                      ),
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      CustomButton(
+                                        textfontSize: 14,
+                                        textColor:
+                                            Color.fromARGB(255, 56, 35, 35),
+                                        btnColor: Colors.amber,
+                                        width: 80,
+                                        height: 40,
+                                        text: 'Messege',
+                                        onpress: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChatScreen(
+                                                  userName: data['name'],
+                                                  userImage: data['profile'],
+                                                ),
+                                              ));
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -296,7 +327,8 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                       builder:
                           (context, AsyncSnapshot<List<Contact>> snapshot) {
                         if (snapshot.hasError) {
-                          return Text('SOMETHING GOES WRONG: ${snapshot.error}');
+                          return Text(
+                              'SOMETHING GOES WRONG: ${snapshot.error}');
                         }
                         if (snapshot.hasData) {
                           final List<Contact> myContacts = snapshot.data ?? [];
@@ -346,15 +378,10 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                   ),
                                 );
                               }
-                              if (
-                                  //   data['name']
-                                  // .toString()
-                                  // .toLowerCase()
-                                  // .startsWith(name.toLowerCase())
-                                  contact.displayName
-                                      .toString()
-                                      .toLowerCase()
-                                      .startsWith(name.toLowerCase())) {
+                              if (contact.displayName
+                                  .toString()
+                                  .toLowerCase()
+                                  .startsWith(name.toLowerCase())) {
                                 return Container(
                                   decoration: const BoxDecoration(
                                     color: Color(0xFFf4f4f4),
@@ -422,7 +449,7 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
 Future<List<Contact>> getContacts(bool phonecontact) async {
   int count = 0;
   if (phonecontact == true) {
-    await Future.delayed(Duration(seconds: 4));
+    await Future.delayed(Duration(seconds: 2));
   }
   bool isGranted = await Permission.contacts.status.isGranted;
   if (!isGranted) {

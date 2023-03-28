@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_api.dart';
+import 'package:chat_app/pages/chat_board.dart';
 import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/pages/register_screen.dart';
 import 'package:chat_app/utilities/utils.dart';
@@ -14,7 +15,6 @@ class AuthProvider extends ChangeNotifier {
   PhoneNumber? _phoneNumber;
   PhoneNumber? get phoneNumber => _phoneNumber;
 
-  // List<String> dummy = [];
   String? _otp;
   String get otp => _otp!;
   final TextEditingController _nameController = TextEditingController();
@@ -45,7 +45,7 @@ class AuthProvider extends ChangeNotifier {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ChatScreen(),
+          builder: (context) => ChatBoardScreen(),
         ),
       );
     } else if (temp == 0) {

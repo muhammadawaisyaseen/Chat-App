@@ -11,8 +11,9 @@ class AuthApi {
   static final FirebaseAuth _authInstance = FirebaseAuth.instance;
   static User? get getCurrentUser => _authInstance.currentUser;
 
-  String _uid = getCurrentUser!.uid;
-  String get uid => _uid;
+ String _uid = getCurrentUser!.uid;
+ String get uid => _uid;
+  
 
   final FirebaseFirestore _firestoreInstance = FirebaseFirestore.instance;
   FirebaseFirestore get firestoreInstance => _firestoreInstance;
@@ -60,6 +61,7 @@ class AuthApi {
           await _authInstance.signInWithCredential(phoneAuthCredential);
       if (authCredetial.user != null) {
         _uid = authCredetial.user!.uid;
+        
         // DocumentSnapshot snapshot =
         // await _firestoreInstance.collection(_collection).doc(_uid).get();
 

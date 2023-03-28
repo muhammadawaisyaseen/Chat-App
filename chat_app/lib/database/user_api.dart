@@ -61,19 +61,4 @@ class UserApi {
         .where(FieldPath.documentId, whereIn: temp)
         .get();
   }
-
-//   void runFilter(String enteredKeyword) async {
-//     if (enteredKeyword.isNotEmpty) {}
-//     var snapshot = await _firestoreInstance
-//         .collection(_collection)
-//         .where(
-//           'name',
-//           isGreaterThanOrEqualTo: enteredKeyword,
-//           isLessThan: enteredKeyword.substring(0, enteredKeyword.length - 1) +
-//               String.fromCharCode(
-//                   enteredKeyword.codeUnitAt(enteredKeyword.length - 1) + 1),
-//         )
-//         .get();
-//     // print('enteredKeyword: ${snapshot.docs}');
-//   }
 }
