@@ -18,7 +18,7 @@ class _OtpScreenState extends State<OtpScreen> {
     final isLoading =
         Provider.of<AuthProvider>(context, listen: true).isLoading;
     return Scaffold(
-      backgroundColor: Color(0xFFf4f4f4),
+      backgroundColor: const Color(0xFFf4f4f4),
       body: SafeArea(
         child: isLoading == true
             ? const Center(

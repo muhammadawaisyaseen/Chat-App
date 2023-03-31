@@ -11,7 +11,7 @@ class NumberScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFf4f4f4),
+        backgroundColor: const Color(0xFFf4f4f4),
         body: Consumer<AuthProvider>(
           builder: (context, AuthProvider authPro, _) {
             return Padding(

@@ -1,67 +1,32 @@
+import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
+import 'package:chat_app/models/messege_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-// class ChatScreen extends StatefulWidget {
-//   ChatScreen({
-//     // required this.userId, required this.userName,
-//      super.key});
-//   // String userId;
-//   // String userName;
-
-//   @override
-//   State<ChatScreen> createState() => _ChatScreenState();
-// }
-
-// class _ChatScreenState extends State<ChatScreen> {
-//   // Stream<QuerySnapshot> chats;
-
-//   // getChats() {
-//   //   UserChat().getChats(widget.userId).
-//   // }
-
-//   @override
-//   // void initState() {
-//   //   getChats();
-//   //   // TODO: implement initState
-//   //   super.initState();
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Chat screen'),
-//       ),
-//     );
-//   }
-// }
 
 class ChatScreen extends StatefulWidget {
   final String userName;
   final String userImage;
-
-  ChatScreen({required this.userName, required this.userImage});
+  final String chatId;
+  final String frndId;
+  ChatScreen({
+    required this.userName,
+    required this.userImage,
+    required this.chatId,
+    required this.frndId
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  void _handleSubmitted(String text) {
-    _messegeController.clear();
-    setState(() {
-      // messages.insert(0, text);
-    });
-  }
-
-  TextEditingController _messegeController = TextEditingController();
-
+  final TextEditingController _messegeController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFf4f4f4),
+        backgroundColor: const Color(0xFFf4f4f4),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start, // |
           crossAxisAlignment: CrossAxisAlignment.start, // --------------
@@ -137,14 +102,24 @@ class _ChatScreenState extends State<ChatScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: IconButton(
                           icon: const Icon(Icons.send),
-                          onPressed: () =>
-                              _handleSubmitted(_messegeController.text)),
+                          onPressed: () {
+                            MsgContent con = MsgContent(
+                              uid: AuthApi().uid,
+                              content: _messegeController.text,
+                              type: 'text',
+                              addTime: Timestamp.now(),
+                            );
+                            UserChatApi().sendMessege(con, widget.chatId,widget.frndId);
+                            _messegeController.clear();
+                            print('PRESS ON SEND');
+                          }
+                          // _handleSubmitted(_messegeController.text),
+                          ),
                     )
                   ],
                 ),
               ),
             ),
-          
           ],
         ),
       ),
