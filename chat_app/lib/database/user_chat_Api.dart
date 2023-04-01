@@ -125,7 +125,7 @@ class UserChatApi {
     });
   }
 
-//Generate chat ids
+//Generate chat ids it will remain same for both users
   String uniqueChatId({required String withChat}) {
     if (withChat.compareTo(AuthApi().uid) > 0) {
       return withChat + AuthApi().uid;

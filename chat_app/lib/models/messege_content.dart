@@ -5,12 +5,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class MsgContent {
-  String? uid;
+  String? senderId;
   String? content;
   String? type;
   Timestamp? addTime;
   MsgContent({
-    required this.uid,
+    required this.senderId,
     required this.content,
     required this.type,
     required this.addTime,
@@ -18,7 +18,7 @@ class MsgContent {
 
   Map<String, dynamic> toFirestore() {
     return{
-      if(uid!=null)'uid': uid,
+      if(senderId!=null)'senderId': senderId,
       if(content!=null)'content': content,
       if(type!=null)'type': type,
       if(addTime!=null)'addTime': addTime,
@@ -31,7 +31,7 @@ class MsgContent {
   ) {
     final data = snapshot.data();
     return MsgContent(
-      uid: data?['uid'] as String,
+      senderId: data?['senderId'] as String,
       content: data?['content'] as String,
       type: data?['type'] as String,
       addTime: data?['addTime'],

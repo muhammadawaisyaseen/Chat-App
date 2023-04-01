@@ -1,6 +1,8 @@
 import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/database/user_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
 import 'package:chat_app/models/messege_content.dart';
+import 'package:chat_app/widgets/messege_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +11,11 @@ class ChatScreen extends StatefulWidget {
   final String userImage;
   final String chatId;
   final String frndId;
-  ChatScreen({
-    required this.userName,
-    required this.userImage,
-    required this.chatId,
-    required this.frndId
-  });
+  ChatScreen(
+      {required this.userName,
+      required this.userImage,
+      required this.chatId,
+      required this.frndId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -77,7 +78,47 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
-            const Spacer(),
+            Expanded(
+              child: StreamBuilder(
+                stream: UserApi.firestoreInstance
+                    .collection('chat')
+                    .doc(widget.chatId)
+                    .collection('msgList')
+                    .orderBy('addTime', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Center(
+                        child: Text('Loading...'),
+                      );
+                    default:
+                      return ListView.builder(
+                        reverse: true,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          DocumentSnapshot document =
+                              snapshot.data!.docs[index];
+                          return MessegeTile(
+                            content: document['content'],
+                            sederId: document['senderId'],
+                            sentByMe: AuthApi().uid == document['senderId'],
+                          );
+                          // return ListTile(
+                          //   title: Text(document['content']),
+
+                          // subtitle: Text(document['addTime'].toString()),
+                          // );
+                        },
+                      );
+                  }
+                },
+              ),
+            ),
+            // Spacer(),
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: Container(
@@ -93,7 +134,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     Flexible(
                       child: TextField(
                         controller: _messegeController,
-                        // onSubmitted: ,
                         decoration: const InputDecoration.collapsed(
                             hintText: 'Send a message'),
                       ),
@@ -104,17 +144,15 @@ class _ChatScreenState extends State<ChatScreen> {
                           icon: const Icon(Icons.send),
                           onPressed: () {
                             MsgContent con = MsgContent(
-                              uid: AuthApi().uid,
+                              senderId: AuthApi().uid,
                               content: _messegeController.text,
                               type: 'text',
                               addTime: Timestamp.now(),
                             );
-                            UserChatApi().sendMessege(con, widget.chatId,widget.frndId);
+                            UserChatApi()
+                                .sendMessege(con, widget.chatId, widget.frndId);
                             _messegeController.clear();
-                            print('PRESS ON SEND');
-                          }
-                          // _handleSubmitted(_messegeController.text),
-                          ),
+                          }),
                     )
                   ],
                 ),
