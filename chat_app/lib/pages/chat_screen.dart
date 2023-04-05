@@ -80,12 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Expanded(
               child: StreamBuilder(
-                stream: UserApi.firestoreInstance
-                    .collection('chat')
-                    .doc(widget.chatId)
-                    .collection('msgList')
-                    .orderBy('addTime', descending: true)
-                    .snapshots(),
+                stream: UserChatApi().gettingChat(widget.chatId),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
@@ -107,11 +102,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             sederId: document['senderId'],
                             sentByMe: AuthApi().uid == document['senderId'],
                           );
-                          // return ListTile(
-                          //   title: Text(document['content']),
-
-                          // subtitle: Text(document['addTime'].toString()),
-                          // );
                         },
                       );
                   }
@@ -133,6 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     Flexible(
                       child: TextField(
+                        maxLines: null,
                         controller: _messegeController,
                         decoration: const InputDecoration.collapsed(
                             hintText: 'Send a message'),

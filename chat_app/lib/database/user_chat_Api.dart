@@ -12,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class UserChatApi {
-  // final uuid = Uuid().v4();
-
   static const String _chatCollection = 'chat';
   static const String _collectionMsgList = 'msgList';
   goChat(
@@ -102,7 +100,7 @@ class UserChatApi {
   }
 
   //Send Messege
-  sendMessege(MsgContent con, String chatId,String frndId) async {
+  sendMessege(MsgContent con, String chatId, String frndId) async {
     UserApi.firestoreInstance
         .collection(_chatCollection)
         .doc(chatId) //here current chat id
@@ -119,11 +117,72 @@ class UserChatApi {
         .collection(_chatCollection)
         .doc(chatId)
         .update({
-      'lastMsg': con.content,
-      'senderId': AuthApi().uid,
-      'friendId':frndId,
+        'lastMsg': con.content,
+        'senderId': AuthApi().uid,
+        'friendId': frndId,
+    });
+
+    // await
+
+  }
+
+// Getting chat to display
+  Stream<QuerySnapshot<Map<String, dynamic>>> gettingChat(String chatId) {
+    return UserApi.firestoreInstance
+        .collection('chat')
+        .doc(chatId)
+        .collection('msgList')
+        .orderBy('addTime', descending: true)
+        .snapshots();
+  }
+
+  Stream<List<ChatInfo>> gettingRecentChatData() {
+    return UserApi.firestoreInstance
+        .collection('chat')
+        .where('lastMsg', isNotEqualTo: '')
+        .snapshots()
+        .asyncMap((event) {
+      List<ChatInfo> ch = [];
+      for (DocumentSnapshot<Map<String, dynamic>> element in event.docs) {
+        ch.add(ChatInfo.fromFirestore(element, null));
+      }
+      return ch;
     });
   }
+
+// Getting user DP and Name to display on RecentChatScreen
+  Future<UserInformation> getUserDpAndName(String info) async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await AuthApi()
+        .firestoreInstance
+        .collection(UserApi().collection)
+        .doc(info)
+        .get();
+    return UserInformation.fromMap(snapshot);
+  }
+
+  // Future<List<ChatInfo>> gettingRecentChatData() async {
+  //   final QuerySnapshot<ChatInfo> coll = await AuthApi()
+  //       .firestoreInstance
+  //       .collection('chat')
+  // .withConverter(
+  //   fromFirestore: ChatInfo.fromFirestore,
+  //   toFirestore: (ChatInfo msg, options) => msg.toFirestore(),
+  // )
+  //.where('lastMsg', isNotEqualTo: '')
+  //       .get();
+  //   List<ChatInfo> ch = coll.docs.map((doc) => doc.data()).toList();
+  //   return ch;
+  // }
+
+  // Future<List<UserInformation>> getFriendPartialData(ChatInfo info) async {
+  //   // List<ChatInfo> gettingRecent = await gettingRecentChatData();
+
+  //   return AuthApi()
+  //       .firestoreInstance
+  //       .collection('user_information')
+  //       .doc(info.friendId)
+  //       .get();
+  // }
 
 //Generate chat ids it will remain same for both users
   String uniqueChatId({required String withChat}) {
@@ -133,8 +192,4 @@ class UserChatApi {
       return AuthApi().uid + withChat;
     }
   }
-
-  // String getfriendId(UserInformation info) {
-  //   return info.id;
-  // }
 }

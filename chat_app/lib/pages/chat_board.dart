@@ -395,7 +395,6 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                         }
                         if (snapshot.hasData) {
                           final List<Contact> myContacts = snapshot.data ?? [];
-                          // print('My Contacts $myContacts');
                           return ListView.builder(
                             itemCount: myContacts.length,
                             itemBuilder: (context, index) {
@@ -512,9 +511,6 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
 List<Contact> userEveryWhere = [];
 
 Future<List<Contact>> getContacts(BuildContext context) async {
-  // if (phonecontact == true) {
-  //   await Future.delayed(Duration(seconds: 2));
-  // }
 // Check if contacts permission is already granted
   PermissionStatus permissionStatus = await Permission.contacts.status;
   if (permissionStatus.isGranted) {
@@ -564,8 +560,8 @@ Future<List<Contact>> getContacts(BuildContext context) async {
 
 Future<List<String>> getAppContactsUids(BuildContext context) async {
   await Future.delayed(const Duration(seconds: 2));
-  List<Contact> contact = userEveryWhere;
-  List<UserInformation> userList = await UserApi().retrieveData();
+  List<Contact> contact = userEveryWhere; // All Contacts in mobile
+  List<UserInformation> userList = await UserApi().retrieveData(); // retreve user data
   List<String> dummy = [];
   for (int i = 0; i < contact.length; i++) {
     for (int j = 0; j < userList.length; j++) {

@@ -12,7 +12,6 @@ class MessegeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.red,
       padding: EdgeInsets.only(
           top: 4, bottom: 4, left: sentByMe ? 0 : 24, right: sentByMe ? 24 : 0),
       alignment: sentByMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -47,6 +46,7 @@ class MessegeTile extends StatelessWidget {
               content,
               textAlign: TextAlign.center,
               style: TextStyle(
+                color: Colors.white,
                 fontSize: 16,
               ),
             ),
