@@ -1,5 +1,4 @@
 import 'package:chat_app/database/auth_api.dart';
-import 'package:chat_app/database/user_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
 import 'package:chat_app/models/messege_content.dart';
 import 'package:chat_app/widgets/messege_tile.dart';

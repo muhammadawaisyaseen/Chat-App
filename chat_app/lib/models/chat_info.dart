@@ -1,14 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatInfo {
-  String? chatId;
-  String? senderId;
-  String? friendId;
-  String? lastMsg;
-  Timestamp? lastTime;
+  final String? chatId;
+  final String? senderId;
+  final String? friendId;
+  final String? lastMsg;
+  final Timestamp? lastTime;
+  // final List<String> persons;
   ChatInfo({
     required this.chatId,
     required this.senderId,
