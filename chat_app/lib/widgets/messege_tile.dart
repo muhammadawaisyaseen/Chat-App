@@ -1,20 +1,21 @@
+// import 'package:chat_app/models/chat_info.dart';
+import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/models/messege.dart';
 import 'package:flutter/material.dart';
 
 class MessegeTile extends StatelessWidget {
-  const MessegeTile(
-      {required this.content,
-      required this.sederId,
-      required this.sentByMe,
-      super.key});
-  final String content;
-  final String sederId;
-  final bool sentByMe;
+  const MessegeTile({
+    required this.messege,
+    super.key,
+  });
+  final Messege messege;
   @override
   Widget build(BuildContext context) {
+    final bool isMe = messege.sendBy == AuthApi().uid;
     return Container(
       padding: EdgeInsets.only(
-          top: 4, bottom: 4, left: sentByMe ? 0 : 24, right: sentByMe ? 24 : 0),
-      alignment: sentByMe ? Alignment.centerRight : Alignment.centerLeft,
+          top: 4, bottom: 4, left: isMe ? 0 : 24, right: isMe ? 24 : 0),
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.only(
           top: 17,
@@ -22,11 +23,11 @@ class MessegeTile extends StatelessWidget {
           left: 40,
           right: 20,
         ),
-        margin: sentByMe
+        margin: isMe
             ? const EdgeInsets.only(left: 30)
             : const EdgeInsets.only(right: 30),
         decoration: BoxDecoration(
-          borderRadius: sentByMe
+          borderRadius: isMe
               ? const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -37,15 +38,15 @@ class MessegeTile extends StatelessWidget {
                   topRight: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
-          color: sentByMe ? Theme.of(context).primaryColor : Colors.grey[700],
+          color: isMe ? Theme.of(context).primaryColor : Colors.grey[700],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              content,
+              messege.content.toString(),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
               ),

@@ -1,20 +1,20 @@
-import 'package:chat_app/database/auth_api.dart';
+// import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
-import 'package:chat_app/models/messege_content.dart';
+import 'package:chat_app/models/chat_info.dart';
+import 'package:chat_app/models/messege.dart';
+import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/widgets/messege_tile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String userName;
-  final String userImage;
-  final String chatId;
-  final String frndId;
-  ChatScreen(
-      {required this.userName,
-      required this.userImage,
-      required this.chatId,
-      required this.frndId});
+
+  final UserInformation chatWith;
+  final ChatInfo chat;
+   ChatScreen({
+    required this.chatWith,
+    required this.chat,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -57,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     height: 44,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: NetworkImage(widget.userImage),
+                          image: NetworkImage(widget.chatWith.profile),
                           fit: BoxFit.cover),
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -67,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     width: 12,
                   ),
                   Text(
-                    widget.userName,
+                    widget.chatWith.name,
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -79,31 +79,34 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Expanded(
               child: StreamBuilder(
-                stream: UserChatApi().gettingChat(widget.chatId),
+                stream: UserChatApi().gettingChat(widget.chat.chatId.toString()),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   }
-                  switch (snapshot.connectionState) {
+                  else if(snapshot.hasData){
+                    switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                       return const Center(
                         child: Text('Loading...'),
                       );
                     default:
+                    List<Messege>? messeges = snapshot.data ?? [];
                       return ListView.builder(
                         reverse: true,
-                        itemCount: snapshot.data!.docs.length,
+                        itemCount: messeges.length,
                         itemBuilder: (BuildContext context, int index) {
-                          DocumentSnapshot document =
-                              snapshot.data!.docs[index];
                           return MessegeTile(
-                            content: document['content'],
-                            sederId: document['senderId'],
-                            sentByMe: AuthApi().uid == document['senderId'],
+                            messege: messeges[index],
                           );
                         },
                       );
                   }
+                }else{
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                  
                 },
               ),
             ),
@@ -133,14 +136,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: IconButton(
                           icon: const Icon(Icons.send),
                           onPressed: () {
-                            MsgContent con = MsgContent(
-                              senderId: AuthApi().uid,
-                              content: _messegeController.text,
-                              type: 'text',
-                              addTime: Timestamp.now(),
-                            );
-                            UserChatApi()
-                                .sendMessege(con, widget.chatId, widget.frndId);
+                            // Messege con = Messege(
+                            //   senderId: AuthApi().uid,
+                            //   content: _messegeController.text,
+                            //   type: 'text',
+                            //   timeStamp: Timestamp.now(),
+                            // );
+                            // UserChatApi()
+                            //     .sendMessege(con, widget.chatId, widget.frndId);
                             _messegeController.clear();
                           }),
                     )

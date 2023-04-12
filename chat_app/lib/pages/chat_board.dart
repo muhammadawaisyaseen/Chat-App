@@ -1,7 +1,9 @@
 // import 'dart:html';
 
+import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
+import 'package:chat_app/models/chat_info.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/pages/chat_screen.dart';
 import 'package:chat_app/provider/auth_provider.dart';
@@ -241,26 +243,29 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                       height: 40,
                                       text: 'Messege',
                                       onpress: () {
-                                        String chatId = UserChatApi()
-                                            .uniqueChatId(withChat: data['id']);
-                                        UserInformation info = UserInformation(
+                                        UserInformation user = UserInformation(
                                           name: data['name'],
                                           profile: data['profile'],
                                           id: data['id'],
                                           number: data['number'],
                                         );
-                                        UserChatApi()
-                                            .goChat(info, context, chatId);
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ChatScreen(
-                                                userName: data['name'],
-                                                userImage: data['profile'],
-                                                chatId: chatId,
-                                                frndId: info.id,
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ChatScreen(
+                                              chatWith: user,
+                                              chat: ChatInfo(
+                                                chatId: UserChatApi()
+                                                    .uniqueChatId(
+                                                        withChat: data['id']),
+                                                persons: [
+                                                  AuthApi().uid,
+                                                  user.id
+                                                ],
                                               ),
-                                            ));
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                   ],
@@ -328,28 +333,29 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                       height: 40,
                                       text: 'ChatInfo',
                                       onpress: () {
-                                        String chatId = UserChatApi()
-                                            .uniqueChatId(withChat: data['id']);
-                                        UserInformation info = UserInformation(
+                                        UserInformation user = UserInformation(
                                           name: data['name'],
                                           profile: data['profile'],
                                           id: data['id'],
                                           number: data['number'],
                                         );
-                                        UserChatApi()
-                                            .goChat(info, context, chatId);
-                                            
-                                        // UserChatApi().getfriendId(info);
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ChatScreen(
-                                                userName: data['name'],
-                                                userImage: data['profile'],
-                                                chatId: chatId,
-                                                frndId: info.id,
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ChatScreen(
+                                              chatWith: user,
+                                              chat: ChatInfo(
+                                                chatId: UserChatApi()
+                                                    .uniqueChatId(
+                                                        withChat: data['id']),
+                                                persons: [
+                                                  AuthApi().uid,
+                                                  user.id
+                                                ],
                                               ),
-                                            ));
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                   ],
@@ -533,8 +539,8 @@ Future<List<Contact>> getContacts(BuildContext context) async {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Contacts Permission Required'),
-            content:
-                const Text('Please enable Contacts permission in the app settings.'),
+            content: const Text(
+                'Please enable Contacts permission in the app settings.'),
             actions: <Widget>[
               ElevatedButton(
                 child: const Text('Cancel'),
@@ -561,7 +567,8 @@ Future<List<Contact>> getContacts(BuildContext context) async {
 Future<List<String>> getAppContactsUids(BuildContext context) async {
   await Future.delayed(const Duration(seconds: 2));
   List<Contact> contact = userEveryWhere; // All Contacts in mobile
-  List<UserInformation> userList = await UserApi().retrieveData(); // retreve user data
+  List<UserInformation> userList =
+      await UserApi().retrieveData(); // retreve user data
   List<String> dummy = [];
   for (int i = 0; i < contact.length; i++) {
     for (int j = 0; j < userList.length; j++) {
