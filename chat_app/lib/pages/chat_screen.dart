@@ -1,17 +1,18 @@
 // import 'package:chat_app/database/auth_api.dart';
+import 'package:chat_app/database/auth_api.dart';
 import 'package:chat_app/database/user_chat_Api.dart';
 import 'package:chat_app/models/chat_info.dart';
 import 'package:chat_app/models/messege.dart';
 import 'package:chat_app/models/user_info.dart';
 import 'package:chat_app/widgets/messege_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
-
   final UserInformation chatWith;
   final ChatInfo chat;
-   ChatScreen({
+  ChatScreen({
     required this.chatWith,
     required this.chat,
   });
@@ -79,34 +80,32 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Expanded(
               child: StreamBuilder(
-                stream: UserChatApi().gettingChat(widget.chat.chatId.toString()),
+                stream:
+                    UserChatApi().gettingChat(widget.chat.chatId.toString()),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
-                  }
-                  else if(snapshot.hasData){
+                  } else if (snapshot.hasData) {
                     switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const Center(
-                        child: Text('Loading...'),
-                      );
-                    default:
-                    List<Messege>? messeges = snapshot.data ?? [];
-                      return ListView.builder(
-                        reverse: true,
-                        itemCount: messeges.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return MessegeTile(
-                            messege: messeges[index],
-                          );
-                        },
-                      );
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: Text('Loading...'),
+                        );
+                      default:
+                        List<Messege>? messeges = snapshot.data ?? [];
+                        return ListView.builder(
+                          reverse: true,
+                          itemCount: messeges.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return MessegeTile(
+                              messege: messeges[index],
+                            );
+                          },
+                        );
+                    }
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
                   }
-                }else{
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                  
                 },
               ),
             ),
@@ -142,8 +141,15 @@ class _ChatScreenState extends State<ChatScreen> {
                             //   type: 'text',
                             //   timeStamp: Timestamp.now(),
                             // );
-                            // UserChatApi()
-                            //     .sendMessege(con, widget.chatId, widget.frndId);
+                            widget.chat.lastMessage = Messege(
+                              content: _messegeController.text,
+                              type: 'text',
+                              timeStamp: Timestamp.now(),
+                              sendBy: AuthApi().uid,
+                              sendTo: widget.chatWith.id,
+                            );
+                            // ChatInfo info=ChatInfo(chatId: chatId, persons: persons)
+                            UserChatApi().sendMessege(chat: widget.chat);
                             _messegeController.clear();
                           }),
                     )

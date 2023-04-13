@@ -1,22 +1,25 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // import 'dart:convert';
 
+import 'package:chat_app/models/messege.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatInfo {
   final String? chatId;
   // final String? senderId;
   // final String? friendId;
-  final String? lastMsg;
+  // final String? lastMsg;
   final Timestamp? lastTime;
   final List<String> persons;
+  Messege? lastMessage;
   ChatInfo({
     required this.chatId,
     // required this.senderId,
     // required this.friendId,
-     this.lastMsg,
+    //  this.lastMsg,
      this.lastTime,
-    required this.persons
+    required this.persons,
+    this.lastMessage,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,9 +27,10 @@ class ChatInfo {
       'chatId': chatId,
       // if (senderId != null) 'senderId': senderId,
       // if (friendId != null) 'friendId': friendId,
-      'lastMsg': lastMsg,
+      // 'lastMsg': lastMsg,
       'lastTime': lastTime,
       'persons':persons,
+      'lastMessage':lastMessage,
     };
   }
 
@@ -55,9 +59,10 @@ class ChatInfo {
       chatId: map['chatId'] ??'',
       // senderId: data?['senderId'] as String,
       // friendId: data?['friendId'] as String,
-      lastMsg: map['lastMsg'] as String,
+      // lastMsg: map['lastMsg'] as String,
       lastTime: map['lastTime'] as Timestamp,
       persons: List<String>.from(map['persons']),
+      lastMessage:map['lastMessage'],
     );
   }
 }
