@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        // home: ChatBoardScreen(),
+        // home: const NumberScreen(),
         home: AuthApi.getCurrentUser == null
             ? const NumberScreen()
             : const ChatBoardScreen(),

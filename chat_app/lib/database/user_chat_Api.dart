@@ -143,8 +143,8 @@ class UserChatApi {
   //     CustomToast.errorToast(message: e.toString());
   //   }
   // }
-// Send Messege
 
+// Send Messege
   Future<void> sendMessege({required ChatInfo chat}) async {
     final Messege? newMessege = chat.lastMessage;
     try {
@@ -160,6 +160,8 @@ class UserChatApi {
           .collection(_chatCollection)
           .doc(chat.chatId)
           .set(chat.toMap());
+
+          
     } catch (e) {
       // ignore: avoid_print
       print(e.toString());
@@ -237,7 +239,7 @@ class UserChatApi {
     if (withChat.compareTo(AuthApi().uid) > 0) {
       return withChat + AuthApi().uid;
     } else {
-      return AuthApi().uid + '-Chat-' + withChat;
+      return AuthApi().uid + withChat;
     }
   }
 }
