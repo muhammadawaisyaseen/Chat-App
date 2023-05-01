@@ -4,6 +4,8 @@ import 'package:chat_app/models/chat_info.dart';
 import 'package:chat_app/models/messege.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../models/user_info.dart';
+
 class UserChatApi {
   static const String _chatCollection = 'chat';
   static const String _collectionMsgList = 'msgList';
@@ -144,6 +146,50 @@ class UserChatApi {
   //   }
   // }
 
+//Recent chat screen
+  // Stream<List<Chat>> chats() {
+  //   return _instance
+  //       .collection(_collection)
+  //       .where('persons', arrayContains: AuthMethods.uid)
+  //       .where('is_group', isEqualTo: false)
+  //       .orderBy('timestamp', descending: true)
+  //       .snapshots()
+  //       .asyncMap((QuerySnapshot<Map<String, dynamic>> event) {
+  //     List<Chat> chats = <Chat>[];
+  //     for (DocumentSnapshot<Map<String, dynamic>> element in event.docs) {
+  //       final Chat temp = Chat.fromMap(element.data()!);
+  //       chats.add(temp);
+  //     }
+  //     return chats;
+  //   });
+  // }
+
+//Recent chat screen()
+  Stream<List<ChatInfo>> gettingRecentChatData() {
+    return UserApi.firestoreInstance
+        .collection(_chatCollection)
+        .where('persons', arrayContains: AuthApi().uid)
+        .orderBy('timeStamp', descending: true)
+        .snapshots()
+        .asyncMap((QuerySnapshot<Map<String, dynamic>> event) {
+      List<ChatInfo> chats = [];
+      for (DocumentSnapshot<Map<String, dynamic>> element in event.docs) {
+        chats.add(ChatInfo.fromMap(element.data()!));
+      }
+      return chats;
+    });
+  }
+
+// Getting user DP and Name to display on RecentChatScreen
+  Future<UserInformation> getUserDpAndName(String info) async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await AuthApi()
+        .firestoreInstance
+        .collection(UserApi().collection)
+        .doc(info)
+        .get();
+    return UserInformation.fromMap(snapshot);
+  }
+
 // Send Messege
   Future<void> sendMessege({required ChatInfo chat}) async {
     final Messege? newMessege = chat.lastMessage;
@@ -160,36 +206,11 @@ class UserChatApi {
           .collection(_chatCollection)
           .doc(chat.chatId)
           .set(chat.toMap());
-
-          
     } catch (e) {
       // ignore: avoid_print
       print(e.toString());
     }
   }
-
-  // sendMessege(Messege con, String chatId, String frndId) async {
-  //   UserApi.firestoreInstance
-  //       .collection(_chatCollection)
-  //       .doc(chatId) //here current chat id
-  //       .collection(_collectionMsgList)
-  //       .withConverter(
-  //           fromFirestore: Messege.fromFirestore,
-  //           toFirestore: (Messege msgContent, options) =>
-  //               msgContent.toFirestore())
-  //       .add(con)
-  //       .then(
-  //         (DocumentReference value) => {},
-  //       );
-  //   await UserApi.firestoreInstance
-  //       .collection(_chatCollection)
-  //       .doc(chatId)
-  //       .update({
-  //     'lastMsg': con.content,
-  //     'senderId': AuthApi().uid,
-  //     'friendId': frndId,
-  //   });
-  // }
 
 // Getting chat to display
 
@@ -210,29 +231,7 @@ class UserChatApi {
   //   });
   // }
 
-  // Stream<List<ChatInfo>> gettingRecentChatData() {
-  //   return UserApi.firestoreInstance
-  //       .collection('chat')
-  //       .where('lastMsg', isNotEqualTo: '')
-  //       .snapshots()
-  //       .asyncMap((event) {
-  //     List<ChatInfo> ch = [];
-  //     for (DocumentSnapshot<Map<String, dynamic>> element in event.docs) {
-  //       ch.add(ChatInfo.fromFirestore(element, null));
-  //     }
-  //     return ch;
-  //   });
-  // }
 
-// Getting user DP and Name to display on RecentChatScreen
-  // Future<UserInformation> getUserDpAndName(String info) async {
-  //   DocumentSnapshot<Map<String, dynamic>> snapshot = await AuthApi()
-  //       .firestoreInstance
-  //       .collection(UserApi().collection)
-  //       .doc(info)
-  //       .get();
-  //   return UserInformation.fromMap(snapshot);
-  // }
 
 //Generate chat ids it will remain same for both users
   String uniqueChatId({required String withChat}) {

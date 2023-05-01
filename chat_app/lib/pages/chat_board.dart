@@ -310,7 +310,6 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                         Text(data['number']),
                                       ],
                                     ),
-                                    // Text(appContacts[index]),
                                     const Spacer(),
                                     CustomButton(
                                       textfontSize: 14,

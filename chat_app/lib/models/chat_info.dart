@@ -17,7 +17,7 @@ class ChatInfo {
     // required this.senderId,
     // required this.friendId,
     //  this.lastMsg,
-     this.lastTime,
+    this.lastTime,
     required this.persons,
     this.lastMessage,
   });
@@ -29,11 +29,10 @@ class ChatInfo {
       // if (friendId != null) 'friendId': friendId,
       // 'lastMsg': lastMsg,
       'lastTime': lastTime,
-      'persons':persons,
-      'lastMessage':lastMessage,
+      'persons': persons,
+      'lastMessage': lastMessage!.toMap(),
     };
   }
-
 
   // factory Chat.fromMap(Map<String, dynamic> map) {
   //   return Chat(
@@ -54,15 +53,15 @@ class ChatInfo {
   //   );
   // }
 
-  factory ChatInfo.fromMap(Map<String,dynamic>map) {
+  factory ChatInfo.fromMap(Map<String, dynamic> map) {
     return ChatInfo(
-      chatId: map['chatId'] ??'',
+      chatId: map['chatId'] ?? '',
       // senderId: data?['senderId'] as String,
       // friendId: data?['friendId'] as String,
       // lastMsg: map['lastMsg'] as String,
       lastTime: map['lastTime'] as Timestamp,
       persons: List<String>.from(map['persons']),
-      lastMessage:map['lastMessage'],
+      lastMessage: map['lastMessage'],
     );
   }
 }
