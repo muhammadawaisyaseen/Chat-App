@@ -61,7 +61,7 @@ class ChatInfo {
       // lastMsg: map['lastMsg'] as String,
       lastTime: map['lastTime'] as Timestamp,
       persons: List<String>.from(map['persons']),
-      lastMessage: map['lastMessage'],
+      lastMessage: Messege.fromMap(map['lastMessage']),
     );
   }
 }

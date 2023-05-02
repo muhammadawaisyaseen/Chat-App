@@ -262,6 +262,7 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                                   AuthApi().uid,
                                                   user.id
                                                 ],
+                                                lastTime: Timestamp.now(),
                                               ),
                                             ),
                                           ),
@@ -351,6 +352,7 @@ class _ChatBoardScreenState extends State<ChatBoardScreen> {
                                                   AuthApi().uid,
                                                   user.id
                                                 ],
+                                                lastTime: Timestamp.now(),
                                               ),
                                             ),
                                           ),

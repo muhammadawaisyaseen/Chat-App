@@ -24,10 +24,10 @@ class UserInformation {
 
   factory UserInformation.fromMap(DocumentSnapshot<Map<String, dynamic>> map) {
     return UserInformation(
-      name: map.data()?['name'] as String,
-      profile: map.data()?['profile'] as String,
+      name: map.data()?['name'] ?? 'null',
+      profile: map.data()?['profile'] ?? '',
       id: map.data()?['id'] ??'',
-      number: map.data()?['number'] as String,
+      number: map.data()?['number'] ??'',
     );
   }
 }

@@ -169,7 +169,7 @@ class UserChatApi {
     return UserApi.firestoreInstance
         .collection(_chatCollection)
         .where('persons', arrayContains: AuthApi().uid)
-        .orderBy('timeStamp', descending: true)
+        .orderBy('lastTime', descending: true)
         .snapshots()
         .asyncMap((QuerySnapshot<Map<String, dynamic>> event) {
       List<ChatInfo> chats = [];
@@ -181,13 +181,19 @@ class UserChatApi {
   }
 
 // Getting user DP and Name to display on RecentChatScreen
-  Future<UserInformation> getUserDpAndName(String info) async {
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await AuthApi()
-        .firestoreInstance
-        .collection(UserApi().collection)
-        .doc(info)
-        .get();
-    return UserInformation.fromMap(snapshot);
+  Future<UserInformation?> getUserDpAndName(String info) async {
+    print('Welcome to malik k kapooray ${info}');
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await AuthApi()
+          .firestoreInstance
+          .collection(UserApi().collection)
+          .doc(info)
+          .get();
+      return UserInformation.fromMap(snapshot);
+    } catch (e) {
+      print('Welcome to malik k kapooray 2.0');
+      print(e.toString());
+    }
   }
 
 // Send Messege
@@ -230,8 +236,6 @@ class UserChatApi {
   //     return messages;
   //   });
   // }
-
-
 
 //Generate chat ids it will remain same for both users
   String uniqueChatId({required String withChat}) {

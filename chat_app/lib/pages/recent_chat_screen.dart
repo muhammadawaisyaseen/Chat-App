@@ -66,88 +66,89 @@ class RecentChatScreen extends StatelessWidget {
               stream: UserChatApi().gettingRecentChatData(),
               builder: (context, snapshot) {
                 List<ChatInfo>? chat = snapshot.data ?? [];
-                print('malik');
+                print('Chat List: ${chat.length}');
                 if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-               else if (snapshot.hasData) {
-                          return ListView.builder(
-                      itemCount: chat.length,
-                      itemBuilder: (context, index) {
-                        return FutureBuilder<UserInformation>(
-                  future: UserChatApi()
-                      .getUserDpAndName(chat[index].chatId.toString()),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
-                    else if(snapshot.hasData){
-                        UserInformation? data = snapshot.data;
-                        return Container(
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFf4f4f4),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: NetworkImage(
-                                            data!.profile.toString()
-                                            // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGewlc-5bqNx4S8F6wt4UDQQUXdZ3yOJq4Bg&usqp=CAU' // doc['profile'].toString(),
-
-                                            ),
-                                        fit: BoxFit.cover),
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                  return Text('Error is => : ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: chat.length,
+                    itemBuilder: (context, index) {
+                      return FutureBuilder<UserInformation?>(
+                        future: UserChatApi().getUserDpAndName(chat[index]
+                            .persons
+                            .where((element) => element != AuthApi().uid)
+                            .first),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData) {
+                            UserInformation? data = snapshot.data;
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFf4f4f4),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: Row(
                                   children: [
-                                    Text(
-                                      data.name.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                data!.profile.toString()
+                                                // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGewlc-5bqNx4S8F6wt4UDQQUXdZ3yOJq4Bg&usqp=CAU' // doc['profile'].toString(),
+
+                                                ),
+                                            fit: BoxFit.cover),
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 10,
+                                      width: 10,
                                     ),
-                                    Text(chat[index].lastMessage!.content.toString()),
-                                    // Text(chat[index].lastMsg.toString()),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data.name.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(chat[index]
+                                            .lastMessage!
+                                            .content
+                                            .toString()),
+                                        // Text(chat[index].lastMsg.toString()),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Text(chat[index].lastTime.toString()),
                                   ],
                                 ),
-                                const Spacer(),
-                                Text(chat[index].lastMessage!.timeStamp.toString()),
-                              ],
-                            ),
-                          ),
-                        );
-                    }
-                    else{
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                      },
-                    );
-                    
-                  },
-                );
-              }
-              else{
-                return const Center(child: CircularProgressIndicator());
-              }
-
+                              ),
+                            );
+                          } else {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                        },
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
               },
             ))
           ],
